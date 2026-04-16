@@ -19,6 +19,9 @@
  * POST /api/admin/purge-topic     (admin — permanent hide: _a_T_ → _x_T_)
  *   Body: { game, folder }
  *
+ * POST /api/admin/rename-topic    (admin — rename an active T_ folder)
+ *   Body: { game, folder, newFolder }
+ *
  * Required Worker Secrets (set in Cloudflare dashboard):
  *   GITHUB_TOKEN  — fine-grained PAT, Contents: Read & Write on the repo
  *   GITHUB_OWNER  — GitHub username or org
@@ -56,6 +59,9 @@ export default {
     }
     if (request.method === 'POST' && pathname === '/api/admin/purge-topic') {
       return handleAdminPurgeTopic(request, env);
+    }
+    if (request.method === 'POST' && pathname === '/api/admin/rename-topic') {
+      return handleAdminRenameTopic(request, env);
     }
 
     return new Response('Not found', { status: 404 });
@@ -308,6 +314,36 @@ async function handleAdminPurgeTopic(request, env) {
   return json({ ok: true, purged: purgedFolder });
 }
 
+// ─── Admin: rename-topic ──────────────────────────────────────────────────────
+
+async function handleAdminRenameTopic(request, env) {
+  const authErr = requireAdmin(request, env);
+  if (authErr) return authErr;
+
+  let body;
+  try { body = await request.json(); }
+  catch { return jsonError('Invalid JSON body', 400); }
+
+  const { game, folder, newFolder } = body;
+  if (!game || !folder || !newFolder) return jsonError('game, folder, and newFolder are required', 400);
+  if (!KNOWN_GAMES.includes(game)) return jsonError('Unknown game: ' + game, 400);
+  if (!/^T_/.test(folder))    return jsonError('folder must start with T_', 400);
+  if (!/^T_/.test(newFolder)) return jsonError('newFolder must start with T_', 400);
+  if (folder === newFolder)   return jsonError('newFolder must differ from folder', 400);
+
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      await atomicTopicRenameCommit(env, game, folder, newFolder, 'rename');
+      break;
+    } catch (err) {
+      if (err.message === 'CONFLICT' && attempt < 2) continue;
+      return jsonError('GitHub commit failed: ' + err.message, 502);
+    }
+  }
+
+  return json({ ok: true, renamed: newFolder });
+}
+
 // ─── Atomic commit: FamousPersonGame image save/add ──────────────────────────
 
 async function atomicFPGCommit(env, personName, imgPath, imgBytes, localPath, personMeta) {
@@ -524,7 +560,6 @@ async function atomicTopicRenameCommit(env, game, fromFolder, toFolder, action) 
   if (!manifest.archived) manifest.archived = {};
 
   if (action === 'archive') {
-    // Remove from active, add to archived
     manifest.folders = manifest.folders.filter(f => f !== fromFolder);
     manifest.archived[toFolder] = (manifest.images[fromFolder] || [])
       .map(p => p.replace(`/${fromFolder}/`, `/${toFolder}/`));
@@ -537,6 +572,11 @@ async function atomicTopicRenameCommit(env, game, fromFolder, toFolder, action) 
     delete manifest.archived[fromFolder];
   } else if (action === 'purge') {
     delete manifest.archived[fromFolder];
+  } else if (action === 'rename') {
+    manifest.folders = [...manifest.folders.filter(f => f !== fromFolder), toFolder].sort();
+    manifest.images[toFolder] = (manifest.images[fromFolder] || [])
+      .map(p => p.replace(`/${fromFolder}/`, `/${toFolder}/`));
+    delete manifest.images[fromFolder];
   }
   manifest.generated = new Date().toISOString();
 
