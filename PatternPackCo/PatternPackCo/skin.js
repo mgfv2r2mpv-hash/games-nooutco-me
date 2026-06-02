@@ -57,6 +57,15 @@
       : ms;
   }
 
+  // Remove every in-flight item clone. They are position:fixed, so any
+  // straggler would float above the lid (and not follow the box as it
+  // ships out). Sweep them whenever the box closes or a new one arrives.
+  function sweepFlyers() {
+    document.querySelectorAll('.ppc-fly').forEach(n => n.remove());
+    document.querySelectorAll('.seq-box.is-landing')
+      .forEach(b => b.classList.remove('is-landing'));
+  }
+
   // Set a transform with (or without) a transition, forcing a reflow so
   // a none→duration switch always animates from the current position.
   function tx(el, transform, ms, ease) {
@@ -85,6 +94,7 @@
     const done = () => { if (typeof cb === 'function') cb(); };
     if (!ready()) return done();
 
+    sweepFlyers();                // clear any leftover in-flight clones
     els.neon.classList.remove('lit');
     setBow(false, 0);              // box open
     setBulkLid(false, 0);         // bulk lid covering the choices
@@ -164,6 +174,7 @@
     // Let the final item finish sliding into its slot before the lid drops.
     const lead = dur(D.fly) + 80;
     setTimeout(() => {
+      sweepFlyers();                                 // no clone may float above the lid
       setBow(true, dur(D.bow));                      // lid with a bow drops on
       els.tray.classList.add('is-wrapped');
 
