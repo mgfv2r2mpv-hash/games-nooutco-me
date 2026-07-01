@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-01T23:29:41.396Z",
+  "generated": "2026-07-01T23:30:28.429Z",
   "folders": [
     "T_actions",
     "T_animals",
@@ -180,7 +180,8 @@
     ]
   },
   "displayNames": {
-    "_Resources/_imgSource/T_prepositions/above.svg": "above"
+    "_Resources/_imgSource/T_prepositions/above.svg": "above",
+    "_Resources/_imgSource/T_kitchen_items/kettle.svg": "teapot"
   },
   "archived": {}
 }
