@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-01T23:26:57.255Z",
+  "generated": "2026-07-01T23:27:12.869Z",
   "folders": [
     "T_actions",
     "T_animals",
@@ -123,7 +123,7 @@
     ],
     "T_kitchen_items": [
       "_Resources/_imgSource/T_kitchen_items/blender.svg",
-      "_Resources/_imgSource/T_kitchen_items/bowl.svg",
+      "_Resources/_imgSource/T_kitchen_items/bowl.jpg",
       "_Resources/_imgSource/T_kitchen_items/chopsticks.svg",
       "_Resources/_imgSource/T_kitchen_items/coffee-mug.svg",
       "_Resources/_imgSource/T_kitchen_items/cup.svg",
