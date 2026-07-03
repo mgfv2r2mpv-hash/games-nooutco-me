@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-01T23:31:48.305Z",
+  "generated": "2026-07-03T03:04:51.688Z",
   "folders": [
     "T_actions",
     "T_animals",
@@ -81,7 +81,7 @@
       "_Resources/_imgSource/T_community_helpers/teacher.jpg"
     ],
     "T_emotions": [
-      "_Resources/_imgSource/T_emotions/angry.svg",
+      "_Resources/_imgSource/T_emotions/angry.jpg",
       "_Resources/_imgSource/T_emotions/bored.svg",
       "_Resources/_imgSource/T_emotions/calm.svg",
       "_Resources/_imgSource/T_emotions/confused.svg",
