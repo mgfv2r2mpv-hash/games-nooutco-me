@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-03T03:12:07.926Z",
+  "generated": "2026-07-03T03:12:32.296Z",
   "folders": [
     "T_actions",
     "T_animals",
@@ -94,7 +94,7 @@
       "_Resources/_imgSource/T_emotions/scared.jpg",
       "_Resources/_imgSource/T_emotions/sick.jpg",
       "_Resources/_imgSource/T_emotions/silly.jpg",
-      "_Resources/_imgSource/T_emotions/surprised.svg",
+      "_Resources/_imgSource/T_emotions/surprised.jpg",
       "_Resources/_imgSource/T_emotions/tired.svg"
     ],
     "T_foods": [
